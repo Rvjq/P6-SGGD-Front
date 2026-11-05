@@ -1,8 +1,27 @@
-import React, { createContext, useContext, useState } from 'react';
-import type { PerfilId, RegistroIndicador, AuditoriaEntrada, HistoricoEntrada } from '../types';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+
+import {
+  iniciarSessao,
+  obterSessao,
+  encerrarSessao,
+} from '../services/auth';
+
+import type { UsuarioAutenticado } from '../services/auth';
+
+import type { 
+  PerfilId, 
+  RegistroIndicador, 
+  AuditoriaEntrada, 
+  HistoricoEntrada 
+} from '../types';
+
 import {
   PERFIS,
-  USUARIOS,
   COMPETENCIAS,
   COMPETENCIA_ATUAL_ID,
   REGISTROS_INICIAIS,
@@ -10,6 +29,8 @@ import {
 } from '../data/mockData';
 
 interface AppContextValue {
+  verificandoSessao: boolean;
+  usuarioLogado: UsuarioAutenticado | null;
   autenticado: boolean;
   perfilAtual: PerfilId;
   usuarioAtual: string;
@@ -17,8 +38,8 @@ interface AppContextValue {
   competencias: typeof COMPETENCIAS;
   registros: RegistroIndicador[];
   auditoria: AuditoriaEntrada[];
-  entrar: () => void;
-  sair: () => void;
+  entrar: (email: string, senha: string) => Promise<void>;
+  sair: () => Promise<void>;
   definirPerfil: (perfil: PerfilId) => void;
   definirCompetencia: (id: string) => void;
   salvarRascunho: (id: string, valor: number, observacoes?: string) => void;
@@ -31,11 +52,6 @@ interface AppContextValue {
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
 
-function nomeUsuarioPorPerfil(perfil: PerfilId): string {
-  const usuario = USUARIOS.find((u) => u.perfilId === perfil && u.status === 'Ativo');
-  return usuario?.nome ?? 'Usuário';
-}
-
 function agora(): string {
   const d = new Date();
   const pad = (n: number) => String(n).padStart(2, '0');
@@ -45,14 +61,59 @@ function agora(): string {
 }
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [autenticado, setAutenticado] = useState(false);
+  const [usuarioLogado, setUsuarioLogado] =
+  useState<UsuarioAutenticado | null>(null);
+
+  const [verificandoSessao, setVerificandoSessao] =
+    useState(true);
+
+  const autenticado = usuarioLogado !== null;
+
+  //Recuperar Sessão ao recarregar pagina
+  useEffect(() => {
+  let cancelado = false;
+
+    obterSessao()
+      .then((usuario) => {
+        if (!cancelado) {
+          setUsuarioLogado(usuario);
+        }
+      })
+      .catch(() => {
+        if (!cancelado) {
+          setUsuarioLogado(null);
+        }
+      })
+      .finally(() => {
+        if (!cancelado) {
+          setVerificandoSessao(false);
+        }
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
+  async function entrar(email: string, senha: string) {
+    const usuario = await iniciarSessao(email, senha);
+    setUsuarioLogado(usuario);
+  }
+
+  async function sair() {
+    await encerrarSessao();
+    setUsuarioLogado(null);
+  }
+
+  const usuarioAtual = usuarioLogado?.nome ?? 'Usuário';
+
+  // ---
   const [perfilAtual, setPerfilAtual] = useState<PerfilId>('gestor');
   const [competenciaId, setCompetenciaId] = useState(COMPETENCIA_ATUAL_ID);
   const [registros, setRegistros] = useState<RegistroIndicador[]>(REGISTROS_INICIAIS);
   const [auditoria, setAuditoria] = useState<AuditoriaEntrada[]>(AUDITORIA_INICIAL);
   const [competencias, setCompetencias] = useState(COMPETENCIAS);
 
-  const usuarioAtual = nomeUsuarioPorPerfil(perfilAtual);
 
   function registrarAuditoria(entrada: Omit<AuditoriaEntrada, 'id' | 'data' | 'horario'>) {
     const [data, horario] = agora().split(' ');
@@ -73,16 +134,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return [{ ...entrada, id: `h-${r.id}-${r.historico.length + 1}` }, ...r.historico];
   }
 
-  const value: AppContextValue = {
+const value: AppContextValue = {
     autenticado,
+    verificandoSessao,
+    usuarioLogado,
     perfilAtual,
     usuarioAtual,
     competenciaId,
     competencias,
     registros,
     auditoria,
-    entrar: () => setAutenticado(true),
-    sair: () => setAutenticado(false),
+    entrar,
+    sair,
     definirPerfil: (perfil) => setPerfilAtual(perfil),
     definirCompetencia: (id) => setCompetenciaId(id),
     salvarRascunho: (id, valor, observacoes) => {

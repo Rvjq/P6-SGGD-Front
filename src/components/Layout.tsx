@@ -4,7 +4,11 @@ import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 
 export function Layout() {
-  const { autenticado } = useApp();
+  const { autenticado, verificandoSessao } = useApp();
+
+  if (verificandoSessao) {
+    return <p>Verificando sessão...</p>;
+  }
 
   if (!autenticado) {
     return <Navigate to="/" replace />;

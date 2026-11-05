@@ -10,9 +10,17 @@ export function Header() {
   const competenciaAtual = competencias.find((c) => c.id === competenciaId);
   const perfilInfo = PERFIS.find((p) => p.id === perfilAtual);
 
-  function handleSair() {
-    sair();
-    navigate('/');
+  async function handleSair() {
+    try {
+      await sair();
+      navigate('/', { replace: true });
+    } catch (error) {
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível encerrar a sessão.'
+      );
+    }
   }
 
   return (
