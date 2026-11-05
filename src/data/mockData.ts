@@ -1,37 +1,12 @@
 import type {
-  Perfil,
   Distrito,
   Unidade,
-  Usuario,
   Competencia,
   Vigencia,
   IndicadorCatalogo,
   RegistroIndicador,
   AuditoriaEntrada,
 } from '../types';
-
-export const PERFIS: Perfil[] = [
-  {
-    id: 'gestor',
-    nome: 'Gestor de Unidade',
-    descricao: 'Preenche indicadores da própria unidade e acompanha o histórico.',
-  },
-  {
-    id: 'coordenador',
-    nome: 'Coordenador Distrital',
-    descricao: 'Acompanha e valida as unidades do seu distrito.',
-  },
-  {
-    id: 'seab',
-    nome: 'SEAB/CAM — Monitoramento',
-    descricao: 'Visão consolidada do município, validação e fechamento.',
-  },
-  {
-    id: 'configurador',
-    nome: 'Configurador SAB',
-    descricao: 'Configura indicadores, metas, pesos e vigências das regras.',
-  },
-];
 
 export const DISTRITOS: Distrito[] = [
   { id: 'd1', nome: 'Distrito I' },
@@ -44,87 +19,6 @@ export const UNIDADES: Unidade[] = [
   { id: 'u2', nome: 'USF Casa Amarela', distritoId: 'd1', tipo: 'USF' },
   { id: 'u3', nome: 'USF Ibura', distritoId: 'd2', tipo: 'USF' },
   { id: 'u4', nome: 'USF Várzea', distritoId: 'd3', tipo: 'USF' },
-];
-
-export const USUARIOS: Usuario[] = [
-  {
-    id: 'us1',
-    nome: 'Ana Beatriz Souza',
-    email: 'ana.souza@saude.gov.br',
-    perfilId: 'gestor',
-    unidadeId: 'u1',
-    distritoId: 'd1',
-    tipoUnidade: 'USF',
-    status: 'Ativo',
-  },
-  {
-    id: 'us2',
-    nome: 'Carlos Eduardo Lima',
-    email: 'carlos.lima@saude.gov.br',
-    perfilId: 'gestor',
-    unidadeId: 'u2',
-    distritoId: 'd1',
-    tipoUnidade: 'USF',
-    status: 'Ativo',
-  },
-  {
-    id: 'us3',
-    nome: 'Fernanda Alves Rocha',
-    email: 'fernanda.rocha@saude.gov.br',
-    perfilId: 'gestor',
-    unidadeId: 'u3',
-    distritoId: 'd2',
-    tipoUnidade: 'USF',
-    status: 'Ativo',
-  },
-  {
-    id: 'us4',
-    nome: 'João Pedro Nascimento',
-    email: 'joao.nascimento@saude.gov.br',
-    perfilId: 'gestor',
-    unidadeId: 'u4',
-    distritoId: 'd3',
-    tipoUnidade: 'USF',
-    status: 'Ativo',
-  },
-  {
-    id: 'us5',
-    nome: 'Marcela Torres Dias',
-    email: 'marcela.dias@saude.gov.br',
-    perfilId: 'coordenador',
-    distritoId: 'd1',
-    status: 'Ativo',
-  },
-  {
-    id: 'us6',
-    nome: 'Roberto Cavalcanti',
-    email: 'roberto.cavalcanti@saude.gov.br',
-    perfilId: 'coordenador',
-    distritoId: 'd2',
-    status: 'Ativo',
-  },
-  {
-    id: 'us7',
-    nome: 'Patrícia Gomes Freitas',
-    email: 'patricia.freitas@saude.gov.br',
-    perfilId: 'seab',
-    status: 'Ativo',
-  },
-  {
-    id: 'us8',
-    nome: 'Diego Martins Barros',
-    email: 'diego.barros@saude.gov.br',
-    perfilId: 'configurador',
-    status: 'Ativo',
-  },
-  {
-    id: 'us9',
-    nome: 'Luciana Pereira Melo',
-    email: 'luciana.melo@saude.gov.br',
-    perfilId: 'coordenador',
-    distritoId: 'd3',
-    status: 'Inativo',
-  },
 ];
 
 export const COMPETENCIAS: Competencia[] = [
@@ -161,7 +55,6 @@ export const INDICADORES_CATALOGO: IndicadorCatalogo[] = [
     unidadeMedida: '%',
     formula: '(Pacientes acompanhados / Pacientes elegíveis) × 100',
     tipoUnidade: 'USF',
-    perfilResponsavel: 'gestor',
     status: 'Ativo',
     vigenciaId: 'v2',
   },
@@ -173,7 +66,6 @@ export const INDICADORES_CATALOGO: IndicadorCatalogo[] = [
     unidadeMedida: '%',
     formula: '(Visitas realizadas / Visitas programadas) × 100',
     tipoUnidade: 'USF',
-    perfilResponsavel: 'gestor',
     status: 'Ativo',
     vigenciaId: 'v2',
   },
@@ -185,7 +77,6 @@ export const INDICADORES_CATALOGO: IndicadorCatalogo[] = [
     unidadeMedida: '%',
     formula: '(Gestantes acompanhadas / Gestantes cadastradas) × 100',
     tipoUnidade: 'USF',
-    perfilResponsavel: 'gestor',
     status: 'Ativo',
     vigenciaId: 'v2',
   },
@@ -197,7 +88,6 @@ export const INDICADORES_CATALOGO: IndicadorCatalogo[] = [
     unidadeMedida: '%',
     formula: '(Hipertensos controlados / Hipertensos cadastrados) × 100',
     tipoUnidade: 'USF',
-    perfilResponsavel: 'gestor',
     status: 'Ativo',
     vigenciaId: 'v2',
   },
@@ -209,7 +99,6 @@ export const INDICADORES_CATALOGO: IndicadorCatalogo[] = [
     unidadeMedida: '%',
     formula: '(Diabéticos acompanhados / Diabéticos cadastrados) × 100',
     tipoUnidade: 'USF',
-    perfilResponsavel: 'gestor',
     status: 'Ativo',
     vigenciaId: 'v2',
   },
@@ -248,7 +137,7 @@ function buildRegistros(): RegistroIndicador[] {
       const validado =
         status === 'Validado' || status === 'Fechado' ? valores[idx] - 2 : status === 'Devolvido' ? null : null;
       const pontos = calcPontos(ind.meta, validado, ind.peso);
-      const responsavel = USUARIOS.find((u) => u.unidadeId === unidade.id)?.nome ?? '—';
+      const responsavel = 'Responsável demonstrativo';
 
       const historico = [
         {
@@ -318,7 +207,6 @@ export const AUDITORIA_INICIAL: AuditoriaEntrada[] = [
     registroAfetado: 'IND-01 · USF Boa Viagem',
     valorAnterior: 'Rascunho',
     novoValor: 'Enviado',
-    perfil: 'Gestor de Unidade',
     localizacao: 'USF Boa Viagem — Distrito I',
   },
   {
@@ -330,7 +218,6 @@ export const AUDITORIA_INICIAL: AuditoriaEntrada[] = [
     registroAfetado: 'IND-04 · USF Boa Viagem',
     valorAnterior: 'Em revisão',
     novoValor: 'Devolvido',
-    perfil: 'Coordenador Distrital',
     localizacao: 'USF Boa Viagem — Distrito I',
   },
   {
@@ -342,7 +229,6 @@ export const AUDITORIA_INICIAL: AuditoriaEntrada[] = [
     registroAfetado: 'IND-01 · USF Boa Viagem',
     valorAnterior: 'Enviado',
     novoValor: 'Validado',
-    perfil: 'SEAB/CAM',
     localizacao: 'Município',
   },
   {
@@ -354,7 +240,6 @@ export const AUDITORIA_INICIAL: AuditoriaEntrada[] = [
     registroAfetado: 'Vigência — Portaria Julho a Dezembro/2026',
     valorAnterior: 'Portaria Jan-Jun/2026',
     novoValor: 'Portaria Jul-Dez/2026',
-    perfil: 'Configurador SAB',
     localizacao: 'Município',
   },
   {
@@ -366,7 +251,6 @@ export const AUDITORIA_INICIAL: AuditoriaEntrada[] = [
     registroAfetado: 'Competência Agosto/2026',
     valorAnterior: 'Em revisão',
     novoValor: 'Fechado',
-    perfil: 'SEAB/CAM',
     localizacao: 'Município',
   },
 ];

@@ -2,38 +2,36 @@ import { useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { StatusBadge } from '../components/StatusBadge';
 import { IndicadorDetalhes } from '../components/IndicadorDetalhes';
-import { filtrarRegistrosPorEscopo, labelEscopo, unidadesDoEscopo } from '../utils/escopo';
-import { DISTRITOS } from '../data/mockData';
+import { DISTRITOS, UNIDADES } from '../data/mockData';
 import type { RegistroIndicador, StatusIndicador } from '../types';
 
 const STATUS_OPCOES: StatusIndicador[] = ['Rascunho', 'Enviado', 'Em revisão', 'Devolvido', 'Validado', 'Fechado'];
 
 export function Indicadores() {
-  const { registros, perfilAtual, competenciaId, competencias } = useApp();
+  const { registros, competenciaId, competencias } = useApp();
   const [distritoFiltro, setDistritoFiltro] = useState('todos');
   const [tipoFiltro, setTipoFiltro] = useState('todos');
   const [statusFiltro, setStatusFiltro] = useState('todos');
   const [selecionado, setSelecionado] = useState<RegistroIndicador | null>(null);
 
-  const unidadesEscopo = unidadesDoEscopo(perfilAtual);
-  const distritosDisponiveis = DISTRITOS.filter((d) => unidadesEscopo.some((u) => u.distritoId === d.id));
-  const tiposDisponiveis = Array.from(new Set(unidadesEscopo.map((u) => u.tipo)));
+  // Somente filtros de apresentação dos registros DEMONSTRATIVOS.
+  // Restrições de vínculo serão aplicadas pelo backend na API de resultados.
+  const distritosDisponiveis = DISTRITOS;
+  const tiposDisponiveis = Array.from(new Set(UNIDADES.map((u) => u.tipo)));
 
   const registrosFiltrados = useMemo(() => {
-    let lista = filtrarRegistrosPorEscopo(registros, perfilAtual).filter(
-      (r) => r.competenciaId === competenciaId,
-    );
+    let lista = registros.filter((r) => r.competenciaId === competenciaId);
     if (distritoFiltro !== 'todos') lista = lista.filter((r) => r.distritoId === distritoFiltro);
     if (statusFiltro !== 'todos') lista = lista.filter((r) => r.status === statusFiltro);
     if (tipoFiltro !== 'todos') {
-      const unidadesTipo = new Set(unidadesEscopo.filter((u) => u.tipo === tipoFiltro).map((u) => u.id));
+      const unidadesTipo = new Set(UNIDADES.filter((u) => u.tipo === tipoFiltro).map((u) => u.id));
       lista = lista.filter((r) => unidadesTipo.has(r.unidadeId));
     }
     return lista;
-  }, [registros, perfilAtual, competenciaId, distritoFiltro, statusFiltro, tipoFiltro, unidadesEscopo]);
+  }, [registros, competenciaId, distritoFiltro, statusFiltro, tipoFiltro]);
 
   function nomeUnidade(unidadeId: string) {
-    return unidadesEscopo.find((u) => u.id === unidadeId)?.nome ?? unidadeId;
+    return UNIDADES.find((u) => u.id === unidadeId)?.nome ?? unidadeId;
   }
 
   const competencia = competencias.find((c) => c.id === competenciaId);
@@ -42,7 +40,7 @@ export function Indicadores() {
     <div>
       <div className="page-header">
         <div className="page-header-titles">
-          <div className="breadcrumb">{labelEscopo(perfilAtual)}</div>
+          <div className="breadcrumb">Registros demonstrativos</div>
           <h1>Indicadores — {competencia?.label}</h1>
         </div>
       </div>

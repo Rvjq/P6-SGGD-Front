@@ -30,7 +30,7 @@ export function Fechamento() {
     <div>
       <div className="page-header">
         <div className="page-header-titles">
-          <div className="breadcrumb">SEAB/CAM — Monitoramento</div>
+          <div className="breadcrumb">Fechamento · Demonstração</div>
           <h1>Fechamento da competência — {competencia?.label}</h1>
         </div>
         <div className="page-header-actions">
@@ -144,7 +144,7 @@ export function Fechamento() {
                 {pendentes.length > 0 && (
                   <>
                     {' '}
-                    Ainda existem <strong>{pendentes.length}</strong> indicador(es) pendentes neste município.
+                    Ainda existem <strong>{pendentes.length}</strong> indicador(es) pendentes nesta demonstração.
                   </>
                 )}
               </p>

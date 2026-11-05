@@ -20,6 +20,10 @@ export function Layout() {
       <div className="app-main">
         <Header />
         <div className="page-content">
+          <p className="demo-notice" role="note">
+            Autenticação e permissões conectadas ao Django. Competências, unidades,
+            indicadores e ações desta área ainda são demonstrativos, sem persistência no PostgreSQL.
+          </p>
           <Outlet />
         </div>
       </div>

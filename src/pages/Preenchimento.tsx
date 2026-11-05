@@ -2,11 +2,10 @@ import { useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { StatusBadge } from '../components/StatusBadge';
 import { FluxoStatus } from '../components/FluxoStatus';
-import { filtrarRegistrosPorEscopo, labelEscopo } from '../utils/escopo';
 import type { RegistroIndicador } from '../types';
 
 export function Preenchimento() {
-  const { registros, perfilAtual, competenciaId, competencias, salvarRascunho, enviarParaRevisao } = useApp();
+  const { registros, competenciaId, competencias, salvarRascunho, enviarParaRevisao } = useApp();
   const [selecionado, setSelecionado] = useState<RegistroIndicador | null>(null);
   const [valor, setValor] = useState('');
   const [observacoes, setObservacoes] = useState('');
@@ -14,9 +13,9 @@ export function Preenchimento() {
 
   const competencia = competencias.find((c) => c.id === competenciaId);
 
-  const registrosEscopo = useMemo(
-    () => filtrarRegistrosPorEscopo(registros, perfilAtual).filter((r) => r.competenciaId === competenciaId),
-    [registros, perfilAtual, competenciaId],
+  const registrosCompetencia = useMemo(
+    () => registros.filter((r) => r.competenciaId === competenciaId),
+    [registros, competenciaId],
   );
 
   function abrirFormulario(registro: RegistroIndicador) {
@@ -52,19 +51,11 @@ export function Preenchimento() {
     <div>
       <div className="page-header">
         <div className="page-header-titles">
-          <div className="breadcrumb">{labelEscopo(perfilAtual)}</div>
+          <div className="breadcrumb">Registrador · Demonstração</div>
           <h1>Preenchimento de indicadores — {competencia?.label}</h1>
         </div>
       </div>
 
-      {perfilAtual !== 'gestor' && (
-        <div className="section">
-          <p className="helper-text">
-            Esta tela é destinada ao preenchimento pelo Gestor de Unidade. Selecione o perfil "Gestor de Unidade"
-            no topo da página para simular o preenchimento.
-          </p>
-        </div>
-      )}
 
       {competenciaFechada && (
         <div className="section">
@@ -85,7 +76,7 @@ export function Preenchimento() {
               </tr>
             </thead>
             <tbody>
-              {registrosEscopo.map((r) => (
+              {registrosCompetencia.map((r) => (
                 <tr key={r.id}>
                   <td>
                     <div className="cell-strong">{r.indicadorNome}</div>

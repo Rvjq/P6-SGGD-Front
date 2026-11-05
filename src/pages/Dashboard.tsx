@@ -2,17 +2,16 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { StatusBadge } from '../components/StatusBadge';
-import { filtrarRegistrosPorEscopo, labelEscopo } from '../utils/escopo';
 import { UNIDADES, DISTRITOS } from '../data/mockData';
 
 export function Dashboard() {
-  const { registros, perfilAtual, competenciaId, competencias } = useApp();
+  const { registros, competenciaId, competencias } = useApp();
   const navigate = useNavigate();
   const competencia = competencias.find((c) => c.id === competenciaId);
 
   const registrosCompetencia = useMemo(
-    () => filtrarRegistrosPorEscopo(registros, perfilAtual).filter((r) => r.competenciaId === competenciaId),
-    [registros, perfilAtual, competenciaId],
+    () => registros.filter((r) => r.competenciaId === competenciaId),
+    [registros, competenciaId],
   );
 
   const pendentes = registrosCompetencia.filter((r) => r.status === 'Rascunho' || r.status === 'Devolvido');
@@ -40,7 +39,7 @@ export function Dashboard() {
       <div className="page-header">
         <div className="page-header-titles">
           <div className="breadcrumb">Painel geral</div>
-          <h1>Dashboard — {labelEscopo(perfilAtual)}</h1>
+          <h1>Dashboard — Dados demonstrativos</h1>
         </div>
         <div className="page-header-actions">
           <button className="btn" type="button" onClick={() => navigate('/indicadores')}>
@@ -70,7 +69,7 @@ export function Dashboard() {
             <dd>{competencia?.dataPrevistaFechamento}</dd>
           </div>
           <div>
-            <dt>Indicadores no escopo</dt>
+            <dt>Indicadores demonstrativos</dt>
             <dd>{registrosCompetencia.length}</dd>
           </div>
         </div>
@@ -90,7 +89,7 @@ export function Dashboard() {
         <div className="stat-card">
           <div className="stat-label">Em revisão</div>
           <div className="stat-value">{emRevisao.length}</div>
-          <div className="stat-sub">Em análise pelo coordenador/SEAB</div>
+          <div className="stat-sub">Em análise para homologação</div>
         </div>
         <div className="stat-card">
           <div className="stat-label">Validados</div>
@@ -104,7 +103,7 @@ export function Dashboard() {
           Pontuação {competencia?.status === 'Fechado' ? 'final' : 'atual/provisória'}
         </div>
         <div className="stat-card" style={{ maxWidth: 260 }}>
-          <div className="stat-label">Pontuação média do escopo</div>
+          <div className="stat-label">Pontuação média da demonstração</div>
           <div className="stat-value">{pontuacaoProvisoria !== null ? `${pontuacaoProvisoria} pts` : '—'}</div>
           <div className="stat-sub">
             Calculada apenas com os indicadores já validados. Sujeita a alteração até o fechamento.
@@ -118,7 +117,7 @@ export function Dashboard() {
           <span className="hint">{pendentes.length} indicador(es) aguardando ação</span>
         </div>
         {pendentes.length === 0 ? (
-          <div className="empty-state">Nenhuma pendência no momento para este escopo.</div>
+          <div className="empty-state">Nenhuma pendência nos registros de demonstração.</div>
         ) : (
           <div className="data-table-wrap">
             <table className="data-table">

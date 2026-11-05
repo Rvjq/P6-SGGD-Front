@@ -4,6 +4,7 @@ export interface UsuarioAutenticado {
   id: number;
   email: string;
   nome: string;
+  is_superuser: boolean;
   papeis: string[];
   permissoes: string[];
 }

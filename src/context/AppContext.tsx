@@ -13,15 +13,13 @@ import {
 
 import type { UsuarioAutenticado } from '../services/auth';
 
-import type { 
-  PerfilId, 
-  RegistroIndicador, 
-  AuditoriaEntrada, 
-  HistoricoEntrada 
+import type {
+  RegistroIndicador,
+  AuditoriaEntrada,
+  HistoricoEntrada,
 } from '../types';
 
 import {
-  PERFIS,
   COMPETENCIAS,
   COMPETENCIA_ATUAL_ID,
   REGISTROS_INICIAIS,
@@ -32,7 +30,6 @@ interface AppContextValue {
   verificandoSessao: boolean;
   usuarioLogado: UsuarioAutenticado | null;
   autenticado: boolean;
-  perfilAtual: PerfilId;
   usuarioAtual: string;
   competenciaId: string;
   competencias: typeof COMPETENCIAS;
@@ -40,7 +37,6 @@ interface AppContextValue {
   auditoria: AuditoriaEntrada[];
   entrar: (email: string, senha: string) => Promise<void>;
   sair: () => Promise<void>;
-  definirPerfil: (perfil: PerfilId) => void;
   definirCompetencia: (id: string) => void;
   salvarRascunho: (id: string, valor: number, observacoes?: string) => void;
   enviarParaRevisao: (id: string) => void;
@@ -107,8 +103,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const usuarioAtual = usuarioLogado?.nome ?? 'Usuário';
 
-  // ---
-  const [perfilAtual, setPerfilAtual] = useState<PerfilId>('gestor');
+  // Dados demonstrativos: permanecem locais até a criação das APIs de negócio.
   const [competenciaId, setCompetenciaId] = useState(COMPETENCIA_ATUAL_ID);
   const [registros, setRegistros] = useState<RegistroIndicador[]>(REGISTROS_INICIAIS);
   const [auditoria, setAuditoria] = useState<AuditoriaEntrada[]>(AUDITORIA_INICIAL);
@@ -138,7 +133,6 @@ const value: AppContextValue = {
     autenticado,
     verificandoSessao,
     usuarioLogado,
-    perfilAtual,
     usuarioAtual,
     competenciaId,
     competencias,
@@ -146,7 +140,6 @@ const value: AppContextValue = {
     auditoria,
     entrar,
     sair,
-    definirPerfil: (perfil) => setPerfilAtual(perfil),
     definirCompetencia: (id) => setCompetenciaId(id),
     salvarRascunho: (id, valor, observacoes) => {
       atualizarRegistro(id, (r) => ({
@@ -160,7 +153,7 @@ const value: AppContextValue = {
           dataHora: agora(),
           valorAnterior: r.valorInformado !== null ? `${r.valorInformado}%` : '—',
           novoValor: `${valor}% (rascunho)`,
-          motivo: 'Rascunho salvo pelo gestor',
+          motivo: 'Rascunho salvo (demonstração)',
         }),
       }));
     },
@@ -175,7 +168,7 @@ const value: AppContextValue = {
           dataHora: agora(),
           valorAnterior: 'Rascunho',
           novoValor: 'Enviado',
-          motivo: 'Enviado para revisão do coordenador distrital',
+          motivo: 'Enviado para homologação (demonstração)',
         }),
       }));
       if (registro) {
@@ -185,7 +178,6 @@ const value: AppContextValue = {
           registroAfetado: `${registro.indicadorCodigo} · ${registro.indicadorNome}`,
           valorAnterior: 'Rascunho',
           novoValor: 'Enviado',
-          perfil: PERFIS.find((p) => p.id === perfilAtual)?.nome ?? '',
           localizacao: registro.unidadeId,
         });
       }
@@ -214,7 +206,6 @@ const value: AppContextValue = {
           registroAfetado: `${registro.indicadorCodigo} · ${registro.indicadorNome}`,
           valorAnterior: registro.status,
           novoValor: 'Validado',
-          perfil: PERFIS.find((p) => p.id === perfilAtual)?.nome ?? '',
           localizacao: registro.unidadeId,
         });
       }
@@ -241,7 +232,6 @@ const value: AppContextValue = {
           registroAfetado: `${registro.indicadorCodigo} · ${registro.indicadorNome}`,
           valorAnterior: registro.status,
           novoValor: 'Em revisão',
-          perfil: PERFIS.find((p) => p.id === perfilAtual)?.nome ?? '',
           localizacao: registro.unidadeId,
         });
       }
@@ -268,7 +258,6 @@ const value: AppContextValue = {
           registroAfetado: `${registro.indicadorCodigo} · ${registro.indicadorNome}`,
           valorAnterior: registro.status,
           novoValor: 'Devolvido',
-          perfil: PERFIS.find((p) => p.id === perfilAtual)?.nome ?? '',
           localizacao: registro.unidadeId,
         });
       }
@@ -283,7 +272,6 @@ const value: AppContextValue = {
         registroAfetado: `Competência ${compId}`,
         valorAnterior: 'Em revisão',
         novoValor: 'Fechado',
-        perfil: PERFIS.find((p) => p.id === perfilAtual)?.nome ?? '',
         localizacao: 'Município',
       });
     },
@@ -298,4 +286,4 @@ export function useApp(): AppContextValue {
   return ctx;
 }
 
-export { PERFIS };
+
