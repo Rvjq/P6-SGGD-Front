@@ -19,7 +19,7 @@ export function Auditoria() {
 
       <div className="section">
         <p className="helper-text">
-          Registro completo de operações realizadas no sistema, para fins de rastreabilidade e auditabilidade.
+          Histórico demonstrativo de operações para apresentação do fluxo de rastreabilidade.
           Esta tela não determina automaticamente fraude — apenas apresenta o histórico de alterações.
         </p>
       </div>
@@ -50,8 +50,7 @@ export function Auditoria() {
                 <th>Registro afetado</th>
                 <th>Valor anterior</th>
                 <th>Novo valor</th>
-                <th>Perfil</th>
-                <th>Unidade/Distrito</th>
+                  <th>Unidade/Distrito</th>
               </tr>
             </thead>
             <tbody>
@@ -64,13 +63,12 @@ export function Auditoria() {
                   <td>{a.registroAfetado}</td>
                   <td className="cell-muted">{a.valorAnterior}</td>
                   <td>{a.novoValor}</td>
-                  <td>{a.perfil}</td>
                   <td className="cell-muted">{a.localizacao}</td>
                 </tr>
               ))}
               {listaFiltrada.length === 0 && (
                 <tr>
-                  <td colSpan={9}>
+                  <td colSpan={8}>
                     <div className="empty-state">Nenhum registro encontrado.</div>
                   </td>
                 </tr>

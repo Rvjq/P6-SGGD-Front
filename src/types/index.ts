@@ -1,14 +1,6 @@
 // Tipos centrais do protótipo SGGD
 // Sistema de Gestão da Gratificação por Desempenho
 
-export type PerfilId = 'gestor' | 'coordenador' | 'seab' | 'configurador';
-
-export interface Perfil {
-  id: PerfilId;
-  nome: string;
-  descricao: string;
-}
-
 export type StatusIndicador =
   | 'Rascunho'
   | 'Enviado'
@@ -29,17 +21,6 @@ export interface Unidade {
   nome: string;
   distritoId: string;
   tipo: string; // Tipo de unidade (ex: USF, UPA, Policlínica)
-}
-
-export interface Usuario {
-  id: string;
-  nome: string;
-  email: string;
-  perfilId: PerfilId;
-  unidadeId?: string;
-  distritoId?: string;
-  tipoUnidade?: string;
-  status: 'Ativo' | 'Inativo';
 }
 
 export interface Competencia {
@@ -67,7 +48,6 @@ export interface IndicadorCatalogo {
   unidadeMedida: string; // '%'
   formula: string;
   tipoUnidade: string;
-  perfilResponsavel: PerfilId;
   status: 'Ativo' | 'Inativo';
   vigenciaId: string;
 }
@@ -110,6 +90,5 @@ export interface AuditoriaEntrada {
   registroAfetado: string;
   valorAnterior: string;
   novoValor: string;
-  perfil: string;
   localizacao: string; // unidade/distrito
 }

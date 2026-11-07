@@ -2,14 +2,13 @@ import { useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { StatusBadge } from '../components/StatusBadge';
 import { IndicadorDetalhes } from '../components/IndicadorDetalhes';
-import { filtrarRegistrosPorEscopo, labelEscopo } from '../utils/escopo';
 import { UNIDADES, DISTRITOS } from '../data/mockData';
 import type { RegistroIndicador } from '../types';
 
 type Acao = 'correcao' | 'devolucao' | null;
 
 export function Validacao() {
-  const { registros, perfilAtual, competenciaId, competencias, validarRegistro, solicitarCorrecao, devolverRegistro } =
+  const { registros, competenciaId, competencias, validarRegistro, solicitarCorrecao, devolverRegistro } =
     useApp();
   const [detalhe, setDetalhe] = useState<RegistroIndicador | null>(null);
   const [acaoAtiva, setAcaoAtiva] = useState<{ tipo: Acao; registro: RegistroIndicador } | null>(null);
@@ -17,12 +16,12 @@ export function Validacao() {
 
   const competencia = competencias.find((c) => c.id === competenciaId);
 
-  const registrosEscopo = useMemo(
+  const registrosCompetencia = useMemo(
     () =>
-      filtrarRegistrosPorEscopo(registros, perfilAtual)
+      registros
         .filter((r) => r.competenciaId === competenciaId)
         .filter((r) => r.status !== 'Rascunho'),
-    [registros, perfilAtual, competenciaId],
+    [registros, competenciaId],
   );
 
   function nomeUnidade(id: string) {
@@ -42,37 +41,31 @@ export function Validacao() {
     if (acaoAtiva.tipo === 'correcao') {
       solicitarCorrecao(acaoAtiva.registro.id, motivo || 'Correção solicitada pelo revisor.');
     } else if (acaoAtiva.tipo === 'devolucao') {
-      devolverRegistro(acaoAtiva.registro.id, motivo || 'Devolvido para revisão do gestor.');
+      devolverRegistro(acaoAtiva.registro.id, motivo || 'Devolvido para correção do registro.');
     }
     setAcaoAtiva(null);
   }
 
-  const etapaAtualLabel =
-    perfilAtual === 'coordenador' ? 'Coordenador Distrital' : perfilAtual === 'seab' ? 'SEAB/CAM' : 'Revisor';
 
   return (
     <div>
       <div className="page-header">
         <div className="page-header-titles">
-          <div className="breadcrumb">{labelEscopo(perfilAtual)}</div>
+          <div className="breadcrumb">Homologador · Demonstração</div>
           <h1>Validação — {competencia?.label}</h1>
         </div>
       </div>
 
       <div className="section">
-        <div className="section-title">Fluxo de validação</div>
+        <div className="section-title">Fluxo de homologação proposto</div>
         <div className="flow-track">
-          <span className="flow-step done">Gestor</span>
+          <span className="flow-step done">Registrador</span>
           <span className="flow-arrow">→</span>
-          <span className={`flow-step${perfilAtual === 'coordenador' ? ' active' : perfilAtual === 'seab' ? ' done' : ''}`}>
-            Coordenador Distrital
-          </span>
-          <span className="flow-arrow">→</span>
-          <span className={`flow-step${perfilAtual === 'seab' ? ' active' : ''}`}>SEAB/CAM</span>
+          <span className="flow-step active">Homologador (CAM/SECOGE)</span>
         </div>
         <p className="helper-text" style={{ marginTop: 10 }}>
-          Você está atuando como <strong>{etapaAtualLabel}</strong>. Utilize o seletor de perfil no topo para
-          simular as demais etapas do fluxo.
+          Fluxo inicial previsto no planejamento. Registros desta tela ainda são demonstrativos.
+          O escopo de unidades e o bloqueio de autohomologação serão validados no backend.
         </p>
       </div>
 
@@ -94,7 +87,7 @@ export function Validacao() {
               </tr>
             </thead>
             <tbody>
-              {registrosEscopo.map((r) => {
+              {registrosCompetencia.map((r) => {
                 const acionavel = r.status === 'Enviado' || r.status === 'Em revisão';
                 return (
                   <tr key={r.id}>
@@ -149,10 +142,10 @@ export function Validacao() {
                   </tr>
                 );
               })}
-              {registrosEscopo.length === 0 && (
+              {registrosCompetencia.length === 0 && (
                 <tr>
                   <td colSpan={10}>
-                    <div className="empty-state">Nenhum indicador aguardando validação neste escopo.</div>
+                    <div className="empty-state">Nenhum indicador aguardando homologação nos dados de demonstração.</div>
                   </td>
                 </tr>
               )}
@@ -182,7 +175,7 @@ export function Validacao() {
                   id="motivo"
                   value={motivo}
                   onChange={(e) => setMotivo(e.target.value)}
-                  placeholder="Descreva o motivo da solicitação para o gestor da unidade."
+                  placeholder="Descreva o motivo da solicitação de correção."
                 />
               </div>
             </div>

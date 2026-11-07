@@ -1,19 +1,16 @@
-import { INDICADORES_CATALOGO, VIGENCIAS, PERFIS } from '../data/mockData';
+import { INDICADORES_CATALOGO, VIGENCIAS } from '../data/mockData';
 
 export function ConfiguracaoIndicadores() {
-  function nomePerfil(id: string) {
-    return PERFIS.find((p) => p.id === id)?.nome ?? id;
-  }
 
   return (
     <div>
       <div className="page-header">
         <div className="page-header-titles">
-          <div className="breadcrumb">Configurador SAB</div>
+          <div className="breadcrumb">Configurador · Demonstração</div>
           <h1>Configuração de Indicadores</h1>
         </div>
         <div className="page-header-actions">
-          <button className="btn btn-primary" type="button">
+          <button className="btn btn-primary" type="button" disabled title="Cadastro será implementado no backend">
             + Novo indicador
           </button>
         </div>
@@ -34,7 +31,6 @@ export function ConfiguracaoIndicadores() {
                 <th className="cell-num">Meta</th>
                 <th>Fórmula</th>
                 <th>Tipo de unidade</th>
-                <th>Perfil responsável</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -47,7 +43,6 @@ export function ConfiguracaoIndicadores() {
                   <td className="cell-num">{ind.meta}%</td>
                   <td className="cell-muted">{ind.formula}</td>
                   <td>{ind.tipoUnidade}</td>
-                  <td>{nomePerfil(ind.perfilResponsavel)}</td>
                   <td>
                     <span className={`badge ${ind.status === 'Ativo' ? 'badge-validado' : 'badge-rascunho'}`}>
                       <span className="badge-dot" />
@@ -94,7 +89,7 @@ export function ConfiguracaoIndicadores() {
           ))}
         </div>
         <div style={{ marginTop: 14 }}>
-          <button className="btn" type="button">
+          <button className="btn" type="button" disabled title="Versionamento será implementado no backend">
             + Criar nova versão da regra
           </button>
         </div>

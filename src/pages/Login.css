@@ -6,6 +6,12 @@
   background: linear-gradient(180deg, #eef1f4 0%, #e5e9ed 100%);
 }
 
+.login-error {
+  color: var(--color-danger);
+  font-size: 13px;
+  margin: 0;
+}
+
 .login-card {
   width: 380px;
   max-width: 92vw;
